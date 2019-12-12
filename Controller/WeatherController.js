@@ -1,36 +1,46 @@
-
+const axios = require('axios');
 function getWeather(req, res) {
 
-       const city = req.body.city;
+  const city = req.body.city;
 
 
 
-       const getStatus = async (city) => {
-        try {
-            return await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=f84e01f0e65d72dcab68d6030065f17a`);
-        } catch (error) {
-          console.error(error)
-        }
-      }
-      
+  
 
-      const Status = async () => {
-        const stats = await getStatus(city)
-      
-        if (stats.data.message) {
-          console.log(`Got ${Object.entries(breeds.data.message).length} `)
-          res.json({
-            status: "success",
-            data: stats.data.message
-          });
-        }
-      }
-           Status();
- 
+    axios
+    .get(
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=f84e01f0e65d72dcab68d6030065f17a`
+    )
+    .then(      response => {
+      console.log("........", response.data);
+     
+    })
+
+
+/*     try {
+      return await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=f84e01f0e65d72dcab68d6030065f17a`);
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+
+  try {
+    const stats = getStatus(city)
+
+    if (stats) {
+      console.log((stats));
       res.json({
-        status: "success"
+        status: "success",
+        data: stats
       });
+    }
+  }
+  catch (error) {
+    console.error(error)
+  } */
 }
+
 
 module.exports = {
   getWeather

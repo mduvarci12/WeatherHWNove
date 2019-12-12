@@ -4,6 +4,7 @@ const app = express();
 const port = 3000;
 
 const HoursRoute = require('./Routes/hours');
+const CityRoute = require('./Routes/city');
 
 app.use(bodyParser.json());
 
@@ -18,6 +19,7 @@ const database = require("./Database/db.js");
 app.set(database);
 
 app.use('/hours', HoursRoute);
+app.use('/city', CityRoute);
 
 app.get('/', (req, res) => {
   res.send({hi: 'hello'});
