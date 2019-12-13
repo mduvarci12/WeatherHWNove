@@ -6,7 +6,6 @@ const port = 3000;
 const HoursRoute = require('./Routes/hours');
 const CityRoute = require('./Routes/city');
 
-app.use(bodyParser.json());
 
 app.use(
   bodyParser.urlencoded({
