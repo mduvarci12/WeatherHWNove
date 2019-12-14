@@ -2,7 +2,7 @@ const axios = require('axios');
 function getWeather(req, res) {
 
   const city = req.body.city;
-  console.log("........", req.params);
+  console.log("........", city);
   axios
     .get(
       `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=f84e01f0e65d72dcab68d6030065f17a`
@@ -17,7 +17,8 @@ function getWeather(req, res) {
         temp: response.data.main.temp,
         sensTemp: response.data.main.feels_like,
         nem: response.data.main.humidity,
-        ruzgar: response.data.wind.speed
+        ruzgar: response.data.wind.speed,
+        name: response.data.name
       }
       res.json(mResponse);
     })

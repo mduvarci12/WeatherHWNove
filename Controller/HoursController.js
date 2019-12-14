@@ -1,4 +1,6 @@
 var OneSignal = require('onesignal-node');
+const axios = require('axios');
+var message;
 const {
   hourcity
 } = require("../Database/db");
@@ -12,15 +14,15 @@ function getCity(req, res) {
   });
 }
 
-function removeCity(req, res) {
-  hourcity.destroy({
-      where: {
-        city: req.body.city,
-        hour: req.body.hour
-      }
-    })
-    .on('success', function () {
-      res.json({
+async function removeCity(req, res) {
+  await hourcity.destroy({
+    where: {
+      city: req.body.city,
+      hour: req.body.hour
+    }
+  })
+    .then(data => {
+      res.send({
         status: 'success'
       });
     });
@@ -28,17 +30,33 @@ function removeCity(req, res) {
 
 function postCity(req, res) {
   console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", req.body);
+  var message;
   var itm = req.body;
-  hourcity
+    axios
+            .get(
+              `https://api.openweathermap.org/data/2.5/weather?q=${itm.city}&units=metric&appid=f84e01f0e65d72dcab68d6030065f17a`
+            )
+            .then(response => {
+              console.log("........", response.data);
+              //  var jsonData = JSON.stringify(response.data);
+              //  console.log("........", jsonData);
+              var mResponse = {
+                main: response.data.weather[0].main,
+                temp: response.data.main.temp,
+                name: response.data.name
+              }
+              message = mResponse.name + " " + mResponse.temp + " degree " + mResponse.main;
+            }).then(() => {
+
+                hourcity
     .create({
       city: itm.city,
       hour: itm.hour,
     })
     .then(myCity => {
       if (myCity) {
-        console.log("working yet");
         const d = new Date();
-        console.log('Midnight:', d);
+
         const time = myCity.hour;
         var str = req.body.hour.split(" ");
         console.log(str[0]);
@@ -47,7 +65,7 @@ function postCity(req, res) {
         console.log('Before job instantiation');
         CronJob.schedule('' + str[1] + " " + str[0] + ' * * * ', function () {
           const d = new Date();
-          console.log('Midnight:', d);
+
 
 
           // first we need to create a client      
@@ -59,10 +77,11 @@ function postCity(req, res) {
             }
           });
 
+        
           // we need to create a notification to send      
           var firstNotification = new OneSignal.Notification({
             contents: {
-              en: 'changes',
+              en: message,
               tr: "Hava durumu:"
             }
           });
@@ -93,7 +112,7 @@ function postCity(req, res) {
         res.json({
           myCity,
           status: "success"
-         });
+        });
 
 
 
@@ -105,6 +124,9 @@ function postCity(req, res) {
         err: "City couldn't add to DB"
       });
     });
+            })
+
+
 }
 
 module.exports = {
